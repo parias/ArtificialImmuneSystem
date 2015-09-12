@@ -15,7 +15,7 @@ import java.util.Random;
  */
 public class Detector {
 
-    List<String> ranges = new ArrayList<>();
+    private List<String> ranges = new ArrayList<>();
     private int numberRanges;
     private int minRangesValue;
     private int maxRangesValue;
@@ -32,7 +32,7 @@ public class Detector {
      */
     public void populateRangess(int minRangesValue, int maxRangesValue) {
         for (int i = 0; i < numberRanges; i++) {
-            ranges.add(randomRange(minRangesValue, maxRangesValue));
+            getRanges().add(randomRange(minRangesValue, maxRangesValue));
         }
     }
 
@@ -91,6 +91,28 @@ public class Detector {
         } else {
             return large + " " + small;
         }
+    }
+    
+    public boolean inRange(String range, double feature){ 
+        String[] rangeSplit = range.split(" ");
+        double min = Double.parseDouble(rangeSplit[0]);
+        double max = Double.parseDouble(rangeSplit[1]);
+        return (feature > min) && (feature < max);
+        
+    }
+
+    /**
+     * @return the ranges
+     */
+    public List<String> getRanges() {
+        return ranges;
+    }
+
+    /**
+     * @param ranges the ranges to set
+     */
+    public void setRanges(List<String> ranges) {
+        this.ranges = ranges;
     }
 
 }

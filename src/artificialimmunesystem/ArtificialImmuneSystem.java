@@ -23,18 +23,20 @@ public class ArtificialImmuneSystem {
 
     private final List<FeatureVector> self = new ArrayList<>();
     private final List<FeatureVector> nonSelf = new ArrayList<>();
+    private List<Detector> mature = new ArrayList<>();
     private final List<Detector> detectors = new ArrayList<>();
     private static final int BENIGN = 30;
     private static final int MALICIOUS = 30;
     private int numberFeatures;
     private static int numDetectors;
+    private int r;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
 
-        int randomMinRangeValue = 0, randomMaxRangeValue = 500;
+        int randomMinRangeValue = 0, randomMaxRangeValue = 150;
         ArtificialImmuneSystem ais = new ArtificialImmuneSystem();
 
         //Reading from File, populate self/nonself
@@ -60,6 +62,10 @@ public class ArtificialImmuneSystem {
 
         ais.populateDetectors(getNumDetectors(), randomMinRangeValue, randomMaxRangeValue);
 
+        ais.queryR();
+
+        ais.matchRAny(ais.getR());
+
         System.out.println("Progress so Far");
 
     }
@@ -76,7 +82,7 @@ public class ArtificialImmuneSystem {
         for (int i = 1; i < allFeaturesSplit.length - 1; i++) {
             features.add(Double.parseDouble(allFeaturesSplit[i]));
         }
-        
+
         vector.setFeatures(features);
         if (self.size() < BENIGN) {
             self.add(vector);
@@ -144,27 +150,72 @@ public class ArtificialImmuneSystem {
     }
 
     /*
+     * Queries user for number of detectors 
+     */
+    public void queryR() {
+        String rAny = JOptionPane.showInputDialog(null,
+                "Any R number?");
+        setR(Integer.parseInt(rAny));
+    }
+
+
+    /*
      * 
      */
     public void matchSelf(int r) {
 
-        int fired;
-        for (int i = 0; i < numberFeatures - r; i++) {
-
+        for (int i = 0; i < self.size(); i++) {
+            FeatureVector vector = self.get(i);
+            for (int k = 0; k < detectors.size(); k++) {
+                int fired = 0;
+                Detector detector = detectors.get(i);
+                for (int j = 0; j < numberFeatures; j++) {
+                    //String detectorFeature = detector.getRanges().get(j);
+                    //double vectorFeature =  vector.getFeatures().get(j);
+                    if (detector.inRange(detector.getRanges().get(j), vector.getFeatures().get(j))) {
+                        fired++;
+                    }
+                }
+                if (fired >= r) {
+                    mature.add(detector);
+                    detectors.remove(i);
+                }
+            }
         }
     }
 
     /*
      * 
      */
-    public void matchNonSelf(List nonSelf, List detectors) {
+    public void matchNonSelf(int r) {
 
+        int i;
+        for ( i = 0; i < self.size(); i++) {
+            FeatureVector vector = self.get(i);
+            for (int k = 0; k < detectors.size(); k++) {
+                int fired = 0;
+                Detector detector = detectors.get(i);
+                for (int j = 0; j < numberFeatures; j++) {
+                    if (detector.inRange(detector.getRanges().get(j), vector.getFeatures().get(j))) {
+                        fired++;
+                    }
+                }
+                if (fired >= r) {
+                    mature.add(detector);
+                    detectors.remove(i);
+                    --i;
+                }
+            }
+        }
     }
 
     /*
      * 
      */
-    public void matchRAny(List self, List detectors) {
+    public void matchRAny(int r) {
+
+        matchSelf(r);
+        matchNonSelf(r);
     }
 
     /*
@@ -172,5 +223,19 @@ public class ArtificialImmuneSystem {
      */
     public void matchRContinous() {
 
+    }
+
+    /**
+     * @return the r
+     */
+    public int getR() {
+        return r;
+    }
+
+    /**
+     * @param r the r to set
+     */
+    public void setR(int r) {
+        this.r = r;
     }
 }
