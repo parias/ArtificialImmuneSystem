@@ -226,7 +226,7 @@ public class ArtificialImmuneSystem {
      *
      */
     public void matchRContinous() {
-
+        
     }
 
     /**
