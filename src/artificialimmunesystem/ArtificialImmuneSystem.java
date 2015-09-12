@@ -179,6 +179,7 @@ public class ArtificialImmuneSystem {
                 if (fired >= r) {
                     mature.add(detector);
                     detectors.remove(i);
+                    System.out.println("test getI");
                 }
             }
         }
