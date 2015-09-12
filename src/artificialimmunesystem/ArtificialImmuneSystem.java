@@ -24,6 +24,7 @@ public class ArtificialImmuneSystem {
     private final List<FeatureVector> self = new ArrayList<>();
     private final List<FeatureVector> nonSelf = new ArrayList<>();
     private List<Detector> mature = new ArrayList<>();
+    private List<FeatureVector> matureApp = new ArrayList<>();
     private final List<Detector> detectors = new ArrayList<>();
     private static final int BENIGN = 30;
     private static final int MALICIOUS = 30;
@@ -65,6 +66,9 @@ public class ArtificialImmuneSystem {
         ais.queryR();
 
         ais.matchRAny(ais.getR());
+
+        System.out.println(ais.mature.size());
+        System.out.println(ais.matureApp.size());
 
         System.out.println("Progress so Far");
 
@@ -168,17 +172,15 @@ public class ArtificialImmuneSystem {
             FeatureVector vector = self.get(i);
             for (int k = 0; k < detectors.size(); k++) {
                 int fired = 0;
-                Detector detector = detectors.get(i);
+                Detector detector = detectors.get(k);
                 for (int j = 0; j < numberFeatures; j++) {
-                    //String detectorFeature = detector.getRanges().get(j);
-                    //double vectorFeature =  vector.getFeatures().get(j);
                     if (detector.inRange(detector.getRanges().get(j), vector.getFeatures().get(j))) {
                         fired++;
                     }
                 }
                 if (fired >= r) {
-                    mature.add(detector);
-                    detectors.remove(i);
+                    detectors.remove(k);
+                    k--;
                 }
             }
         }
@@ -190,11 +192,12 @@ public class ArtificialImmuneSystem {
     public void matchNonSelf(int r) {
 
         int i;
-        for ( i = 0; i < self.size(); i++) {
-            FeatureVector vector = self.get(i);
+        for (i = 0; i < nonSelf.size(); i++) {
+            boolean detected = false;
+            FeatureVector vector = nonSelf.get(i);
             for (int k = 0; k < detectors.size(); k++) {
                 int fired = 0;
-                Detector detector = detectors.get(i);
+                Detector detector = detectors.get(k);
                 for (int j = 0; j < numberFeatures; j++) {
                     if (detector.inRange(detector.getRanges().get(j), vector.getFeatures().get(j))) {
                         fired++;
@@ -202,9 +205,11 @@ public class ArtificialImmuneSystem {
                 }
                 if (fired >= r) {
                     mature.add(detector);
-                    detectors.remove(i);
-                    --i;
+                    detected = true;
                 }
+            }
+            if (detected == true) {
+                matureApp.add(vector);
             }
         }
     }
@@ -213,7 +218,6 @@ public class ArtificialImmuneSystem {
      * 
      */
     public void matchRAny(int r) {
-
         matchSelf(r);
         matchNonSelf(r);
     }
