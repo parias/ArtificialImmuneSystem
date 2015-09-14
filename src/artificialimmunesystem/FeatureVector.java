@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Pablo A. Arias <parias@aggies.ncat.edu>
  */
-public class FeatureVector {
+public class FeatureVector implements Cloneable {
 
     private List<Double> features = new ArrayList<>();
     private int numberFeatures;
@@ -21,7 +21,7 @@ public class FeatureVector {
      * @return the numberFeatures
      */
     public int getNumberFeatures() {
-        return numberFeatures;
+        return features.size();
     }
 
     /**
@@ -53,5 +53,15 @@ public class FeatureVector {
     public void setFeatures(List<Double> features) {
         this.features = features;
     }
+    
+        /*
+     * Used for cloning the Detectors Array. 
+     * Same Detectors, diff experiments
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
 
 }
