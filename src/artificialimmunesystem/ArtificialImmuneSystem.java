@@ -24,16 +24,20 @@ import javax.swing.JOptionPane;
  */
 public class ArtificialImmuneSystem {
 
+    private final List<FeatureVector> all = new ArrayList<>();
     private final List<FeatureVector> self = new ArrayList<>();
     private final List<FeatureVector> nonSelf = new ArrayList<>();
     private final List<FeatureVector> maskedSelf = new ArrayList<>();
     private final List<FeatureVector> maskedNonSelf = new ArrayList<>();
     private List<Detector> mature = new ArrayList<>();
     private List<Detector> matureContiguous = new ArrayList<>();
+    private List<Detector> matureMasked = new ArrayList<>();
     private List<FeatureVector> matureApp = new ArrayList<>();
     private List<FeatureVector> matureAppContiguous = new ArrayList<>();
+    private List<FeatureVector> matureAppMasked = new ArrayList<>();
     private List<Detector> detectors = new ArrayList<>();
     private List<Detector> detectorsContiguous = new ArrayList<>();
+    private List<Detector> detectorsMasked = new ArrayList<>();
     private static final int BENIGN = 30;
     private static final int MALICIOUS = 30;
     private int numberFeatures;
@@ -69,34 +73,33 @@ public class ArtificialImmuneSystem {
         //ais.queryDetectors();
 
         /*
-        for (int i = 0; i < 524; i++) {
-            double results = 0;
-            for (int j = 0; j < 10; j++) {
-                ais.detectors.clear();
-                ais.matureApp.clear();
-                ais.mature.clear();
-                ais.populateDetectors(1000, randomMinRangeValue, randomMaxRangeValue);
-                ais.matchRAny(i);
-                results += (ais.matureApp.size() / 30.0) * 100;
-                System.out.println(ais.matureApp.size());
-            }
-            System.out.println(results / 10.0);
-            try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("results3.txt", true)))) {
-                out.print("R = " + i);
-                out.print("\tAverage Accuracy:  " + (results / 10.0));
-                out.print("\tNonSelf App Detected:  " + ais.matureApp.size());
-                out.print("\tImmature detectors:  " + ais.detectors.size());
-                out.print("\tMature detectors:  " + ais.mature.size());
-                out.println();
-            } catch (IOException e) {
-                //exception handling left as an exercise for the reader
-            }
+         for (int i = 0; i < 524; i++) {
+         double results = 0;
+         for (int j = 0; j < 10; j++) {
+         ais.detectors.clear();
+         ais.matureApp.clear();
+         ais.mature.clear();
+         ais.populateDetectors(1000, randomMinRangeValue, randomMaxRangeValue);
+         ais.matchRAny(i);
+         results += (ais.matureApp.size() / 30.0) * 100;
+         System.out.println(ais.matureApp.size());
+         }
+         System.out.println(results / 10.0);
+         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("results3.txt", true)))) {
+         out.print("R = " + i);
+         out.print("\tAverage Accuracy:  " + (results / 10.0));
+         out.print("\tNonSelf App Detected:  " + ais.matureApp.size());
+         out.print("\tImmature detectors:  " + ais.detectors.size());
+         out.print("\tMature detectors:  " + ais.mature.size());
+         out.println();
+         } catch (IOException e) {
+         //exception handling left as an exercise for the reader
+         }
 
-        }
-        */
+         }
+         */
         //ais.setDetectorsRContiguous(ais.getDetectors());
         //ais.queryR();
-
         //ais.matchRAny(ais.getR());
         //System.out.println("R-Any AIS");
         //System.out.println(ais.mature.size());
@@ -105,24 +108,62 @@ public class ArtificialImmuneSystem {
         //System.out.println("\nR-Contiguous AIS");
         //System.out.println(ais.matureContiguous.size());
         //System.out.println(ais.matureAppContiguous.size());
-        
+        /* masked process
+         ais.populateDetectors(1000, randomMinRangeValue, randomMaxRangeValue, 524);
+         reduceFeatures(ais.all);
+         ais.setDetectorsMasked(1000, randomMinRangeValue, randomMaxRangeValue, ais.all.get(0).getNumberFeatures());
+         for (int i = 0; i < 60; i++) {
+         if (i < 30) {
+         ais.maskedSelf.add(ais.all.get(i));
+         } else {
+         ais.maskedNonSelf.add(ais.all.get(i));
+         }
+         }
+         ais.matchRAnyMasked(5);
+         System.out.println("R-Any Masked AIS");
+         System.out.println(ais.matureMasked.size());
+         System.out.println(ais.matureAppMasked.size());
+         System.out.println("Progress so Far");
+         */
+        for (int i = 0; i < 211; i++) {
+            double results = 0;
+            for (int j = 0; j < 30; j++) {
+                ais.detectorsMasked.clear();
+                ais.matureAppMasked.clear();
+                ais.matureMasked.clear();
+                ais.populateDetectors(1000, randomMinRangeValue, randomMaxRangeValue, 524);
+                reduceFeatures(ais.all);
+                ais.setDetectorsMasked(1000, randomMinRangeValue, randomMaxRangeValue, ais.all.get(0).getNumberFeatures());
+                for (int k = 0; k < 60; k++) {
+                    if (k < 30) {
+                        ais.maskedSelf.add(ais.all.get(k));
+                    } else {
+                        ais.maskedNonSelf.add(ais.all.get(k));
+                    }
+                }
+                ais.matchRAnyMasked(5);
+                results += (ais.matureAppMasked.size() / 30.0) * 100;
+                System.out.println(ais.matureAppMasked.size());
+            }
+            System.out.println(results / 30.0);
+            try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("resultsMasked.txt", true)))) {
+                out.print("R = " + i);
+                out.print("\tAverage Accuracy:  " + (results / 10.0));
+                out.print("\tNonSelf App Detected:  " + ais.matureAppMasked.size());
+                out.print("\tImmature detectors:  " + ais.detectorsMasked.size());
+                out.print("\tMature detectors:  " + ais.matureMasked.size());
+                out.println();
+            } catch (IOException e) {
+                //exception handling left as an exercise for the reader
+            }
 
-        
-        ais.populateDetectors(1000, randomMinRangeValue, randomMaxRangeValue);
-        //set Masks
-        //clone self/nonself
-        ais.setMask(ais.self, ais.maskedSelf);
-        ais.setMask(ais.nonSelf, ais.maskedNonSelf);
-
-        reduceFeatures(ais.maskedSelf);
-        reduceFeatures(ais.maskedNonSelf);
-        System.out.println("Progress so Far");
+        }
     }
-
     /*
      * Populates self/non-self Feature Vectors with Features
      * Input features from file
      */
+
     public void populateFeatures(String allFeatures) {
         FeatureVector vector = new FeatureVector();
         List<Double> features = new ArrayList<>();
@@ -135,8 +176,10 @@ public class ArtificialImmuneSystem {
         vector.setFeatures(features);
         if (self.size() < BENIGN) {
             self.add(vector);
+            all.add(vector);
         } else {
             nonSelf.add(vector);
+            all.add(vector);
         }
     }
 
@@ -144,10 +187,10 @@ public class ArtificialImmuneSystem {
      * Populates Detector list with random ranges
      * Number of ranges equals number of features in Feature Vector
      */
-    public void populateDetectors(int numDetectors, int randomMinRangeValue, int randomMaxRangeValue) {
+    public void populateDetectors(int numDetectors, int randomMinRangeValue, int randomMaxRangeValue, int numberFeatures) {
         Detector detector;
         for (int i = 0; i < numDetectors; i++) {
-            detector = new Detector(524, randomMinRangeValue, randomMaxRangeValue);
+            detector = new Detector(numberFeatures, randomMinRangeValue, randomMaxRangeValue);
             detector.populateRanges(randomMinRangeValue, randomMaxRangeValue);
             getDetectors().add(detector);
         }
@@ -244,8 +287,63 @@ public class ArtificialImmuneSystem {
     }
 
     /*
+     * Matches detectors to Self
+     */
+    public void matchSelfMasked(int r) {
+
+        for (int i = 0; i < maskedSelf.size(); i++) {
+            FeatureVector vector = maskedSelf.get(i);
+            for (int k = 0; k < detectorsMasked.size(); k++) {
+                int fired = 0;
+                Detector detector = detectorsMasked.get(k);
+                for (int j = 0; j < maskedSelf.get(0).getNumberFeatures(); j++) {
+                    if (detector.inRange(detector.getRanges().get(j), vector.getFeatures().get(j))) {
+                        fired++;
+                    }
+                }
+                if (fired >= r) {
+                    detectorsMasked.remove(k);
+                    k--;
+                }
+            }
+        }
+    }
+
+    /*
+     * Matches remaining detectors to Non-Self
+     */
+    public void matchNonSelfMasked(int r) {
+
+        int i;
+        for (i = 0; i < maskedNonSelf.size(); i++) {
+            boolean detected = false;
+            FeatureVector vector = maskedNonSelf.get(i);
+            for (int k = 0; k < detectorsMasked.size(); k++) {
+                int fired = 0;
+                Detector detector = detectorsMasked.get(k);
+                for (int j = 0; j < maskedNonSelf.get(0).getNumberFeatures(); j++) {
+                    if (detector.inRange(detector.getRanges().get(j), vector.getFeatures().get(j))) {
+                        fired++;
+                    }
+                }
+                if (fired >= r) {
+                    if (!matureMasked.contains(detector)) {
+                        matureMasked.add(detector);
+                    }
+                    detected = true;
+                }
+            }
+            if (detected == true) {
+                if (!matureAppMasked.contains(vector)) {
+                    matureAppMasked.add(vector);
+                }
+            }
+        }
+    }
+    /*
      * Matches detectors to Self, R-Contiguous AIS
      */
+
     public void matchSelfContiguous(int r) {
 
         for (int i = 0; i < self.size(); i++) {
@@ -394,6 +492,15 @@ public class ArtificialImmuneSystem {
         }
     }
 
+    public void setDetectorsMasked(int numDetectors, int randomMinRangeValue, int randomMaxRangeValue, int numberFeatures) {
+        Detector detector;
+        for (int i = 0; i < numDetectors; i++) {
+            detector = new Detector(numberFeatures, randomMinRangeValue, randomMaxRangeValue);
+            detector.populateRanges(randomMinRangeValue, randomMaxRangeValue);
+            detectorsMasked.add(detector);
+        }
+    }
+
     public void setMask(List<FeatureVector> featureVector, List<FeatureVector> masked) {
         //detectorsContiguous
         for (FeatureVector p : featureVector) {
@@ -406,18 +513,23 @@ public class ArtificialImmuneSystem {
     }
 
     private static void reduceFeatures(List<FeatureVector> maskedFV) {
-        
-        for(int i = 0; i< maskedFV.get(0).getNumberFeatures();i++){ //524 features
+
+        for (int i = 0; i < maskedFV.get(0).getNumberFeatures(); i++) { //524 features
             double mask = 0.0;
-            for(int j = 0; j< maskedFV.size();j++){ //30 apps
-                mask += (double)maskedFV.get(j).getFeatures().get(i);
+            for (int j = 0; j < maskedFV.size(); j++) { //30 apps
+                mask += (double) maskedFV.get(j).getFeatures().get(i);
             }
-            if (mask == 0.0){
-                for(int k = 0; k < maskedFV.size();k++){
+            if (mask <= 30.) {
+                for (int k = 0; k < maskedFV.size(); k++) {
                     maskedFV.get(k).getFeatures().remove(i);
                 }
                 i--;
             }
         }
+    }
+
+    private void matchRAnyMasked(int r) {
+        matchSelfMasked(r);
+        matchNonSelfMasked(r);
     }
 }
