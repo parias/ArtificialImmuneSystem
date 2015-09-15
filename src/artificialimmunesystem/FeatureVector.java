@@ -33,6 +33,8 @@ public class FeatureVector {
 
     public void populateFeatures(String allFeatures) {
         String[] allFeaturesSplit = allFeatures.split(",");
+
+        //allfeatures[0] = appName, starts at one
         for (int i = 1; i < allFeaturesSplit.length - 1; i++) {
             features.add(Double.parseDouble(allFeaturesSplit[i]));
         }

@@ -86,7 +86,7 @@ public class ArtificialImmuneSystem {
 
     /*
      * Populates self/non-self Feature Vectors with Features
-     * Features input from file
+     * Input features from file
      */
     public void populateFeatures(String allFeatures) {
         FeatureVector vector = new FeatureVector();
@@ -103,7 +103,6 @@ public class ArtificialImmuneSystem {
         } else {
             nonSelf.add(vector);
         }
-
     }
 
     /*
@@ -113,7 +112,6 @@ public class ArtificialImmuneSystem {
     public void populateDetectors(int numDetectors, int randomMinRangeValue, int randomMaxRangeValue) {
         Detector detector;
         for (int i = 0; i < numDetectors; i++) {
-
             detector = new Detector(524, randomMinRangeValue, randomMaxRangeValue);
             detector.populateRanges(randomMinRangeValue, randomMaxRangeValue);
             getDetectors().add(detector);
@@ -156,26 +154,7 @@ public class ArtificialImmuneSystem {
     }
 
     /*
-     * Queries user for number of detectors 
-     */
-    public void queryDetectors() {
-        String numDetectorsString = JOptionPane.showInputDialog(null,
-                "Number of Detectors?");
-        setNumDetectors(Integer.parseInt(numDetectorsString));
-    }
-
-    /*
-     * Queries user for number of detectors 
-     */
-    public void queryR() {
-        String rAny = JOptionPane.showInputDialog(null,
-                "Any R number?");
-        setR(Integer.parseInt(rAny));
-    }
-
-
-    /*
-     * 
+     * Matches detectors to Self
      */
     public void matchSelf(int r) {
 
@@ -198,7 +177,7 @@ public class ArtificialImmuneSystem {
     }
 
     /*
-     * 
+     * Matches remaining detectors to Non-Self
      */
     public void matchNonSelf(int r) {
 
@@ -226,7 +205,7 @@ public class ArtificialImmuneSystem {
     }
 
     /*
-     * 
+     * Matches detectors to Self, R-Contiguous AIS
      */
     public void matchSelfContiguous(int r) {
 
@@ -243,7 +222,7 @@ public class ArtificialImmuneSystem {
     }
 
     /*
-     * 
+     * Matches remaining detectors to Non-Self, R-Contiguous AIS
      */
     public void matchNonSelfContiguous(int r) {
 
@@ -266,7 +245,8 @@ public class ArtificialImmuneSystem {
     }
 
     /*
-     *
+     * Determines if vector and detector match
+     * Used in matchSelfContiguous & matchNonSelfContiguous
      */
     public boolean matchContiguous(FeatureVector vector, Detector detector, int r) {
 
@@ -289,7 +269,7 @@ public class ArtificialImmuneSystem {
     }
 
     /*
-     * 
+     * R-Any AIS experiment procedure
      */
     public void matchRAny(int r) {
         matchSelf(r);
@@ -297,11 +277,29 @@ public class ArtificialImmuneSystem {
     }
 
     /*
-     * 
+     * R-Contiguous AIS experiment procedure
      */
     public void matchRContiguous(int r) {
         matchSelfContiguous(r);
         matchNonSelfContiguous(r);
+    }
+
+    /*
+     * Queries user for number of detectors 
+     */
+    public void queryDetectors() {
+        String numDetectorsString = JOptionPane.showInputDialog(null,
+                "Number of Detectors?");
+        setNumDetectors(Integer.parseInt(numDetectorsString));
+    }
+
+    /*
+     * Queries user for number of detectors 
+     */
+    public void queryR() {
+        String rAny = JOptionPane.showInputDialog(null,
+                "Any R number?");
+        setR(Integer.parseInt(rAny));
     }
 
     /**
@@ -340,7 +338,7 @@ public class ArtificialImmuneSystem {
     }
 
     /**
-     * @param detectorsRContiguous the detectorsRContiguous to set
+     * @param detectorsRContiguous, detectorsRContiguous detectors to set
      */
     public void setDetectorsRContiguous(List<Detector> detectors) {
         //detectorsContiguous

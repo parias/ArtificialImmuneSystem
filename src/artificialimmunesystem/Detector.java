@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Random;
 
 /**
- *
  * @author Pablo A. Arias <parias@aggies.ncat.edu>
  */
 public class Detector implements Cloneable {
@@ -24,7 +23,6 @@ public class Detector implements Cloneable {
         this.numberRanges = numberRanges;
         this.minRangesValue = minRangesValue;
         this.maxRangesValue = maxRangesValue;
-
     }
 
     /*
@@ -79,7 +77,7 @@ public class Detector implements Cloneable {
     }
 
     /*
-     * @return string with 2 random integers, creating a range
+     * @return string Two andom integers creating a range
      */
     public String randomRange(int minValue, int maxValue) {
         Random rand = new Random();
@@ -93,6 +91,11 @@ public class Detector implements Cloneable {
         }
     }
 
+    /**
+     * Determines if feature is in range of Detector values
+     * @param range, String with 2 values: min & max
+     * @param feature, Double to see inbetween range
+     */
     public boolean inRange(String range, double feature) {
         String[] rangeSplit = range.split(" ");
         double min = Double.parseDouble(rangeSplit[0]);
@@ -115,6 +118,10 @@ public class Detector implements Cloneable {
         this.ranges = ranges;
     }
 
+    /*
+     * Used for cloning the Detectors Array. 
+     * Same Detectors, diff experiments
+     */
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
