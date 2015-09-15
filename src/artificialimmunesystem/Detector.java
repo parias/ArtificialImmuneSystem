@@ -13,15 +13,15 @@ import java.util.Random;
  *
  * @author Pablo A. Arias <parias@aggies.ncat.edu>
  */
-public class Detector {
+public class Detector implements Cloneable{
 
     private List<String> ranges = new ArrayList<>();
     private int numberRanges;
     private int minRangesValue;
     private int maxRangesValue;
 
-    public Detector(int numberRangess, int minRangesValue, int maxRangesValue) {
-        this.numberRanges = numberRangess;
+    public Detector(int numberRanges, int minRangesValue, int maxRangesValue) {
+        this.numberRanges = numberRanges;
         this.minRangesValue = minRangesValue;
         this.maxRangesValue = maxRangesValue;
 
@@ -30,7 +30,7 @@ public class Detector {
     /*
      * Populates Detector with ranges
      */
-    public void populateRangess(int minRangesValue, int maxRangesValue) {
+    public void populateRanges(int minRangesValue, int maxRangesValue) {
         for (int i = 0; i < numberRanges; i++) {
             getRanges().add(randomRange(minRangesValue, maxRangesValue));
         }
@@ -39,15 +39,15 @@ public class Detector {
     /**
      * @return the numberRangess
      */
-    public int getNumberRangess() {
+    public int getNumberRanges() {
         return numberRanges;
     }
 
     /**
      * @param numberRangess the numberRangess to set
      */
-    public void setNumberRangess(int numberRangess) {
-        this.numberRanges = numberRangess;
+    public void setNumberRanges(int numberRanges) {
+        this.numberRanges = numberRanges;
     }
 
     /**
@@ -113,6 +113,11 @@ public class Detector {
      */
     public void setRanges(List<String> ranges) {
         this.ranges = ranges;
+    }
+    
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        return super.clone();
     }
 
 }
