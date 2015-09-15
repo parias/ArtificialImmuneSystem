@@ -209,7 +209,7 @@ public class ArtificialImmuneSystem {
      */
     public void matchSelfContiguous(int r) {
 
-        for (int i = 0; i < self.size() - 28; i++) {
+        for (int i = 0; i < self.size(); i++) {
             FeatureVector vector = self.get(i);
             for (int k = 0; k < getDetectorsContiguous().size(); k++) {
                 Detector detector = detectorsContiguous.get(k);
