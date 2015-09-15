@@ -1,7 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * File:   FeatureVector.java
+ * Author: @Pablo A. Arias
+ * Email: parias@aggies.ncat.edu
+ * Course: Comp 740 - Advanced Artificial Intelligence - Dr. G.V. Dozier
+ * Objective: Implementation of Aritificial Immune System 
+ *      through Negative Selection
+ * Objective: FeatureVector Class for creation of Feature Vectors
+ *      Feature Vectors were populated from file input, gathered from 
+ *      FlowDroid Android Mobile Analysis tool. Populated Feature Vectors
+ *      based on Sink/Flow connections to determine malicious vs. benign
  */
 package artificialimmunesystem;
 
@@ -31,6 +38,9 @@ public class FeatureVector implements Cloneable {
         this.numberFeatures = numberFeatures;
     }
 
+    /*
+     * Polulates feature vector with Doubles from input file
+     */
     public void populateFeatures(String allFeatures) {
         String[] allFeaturesSplit = allFeatures.split(",");
 
@@ -53,15 +63,13 @@ public class FeatureVector implements Cloneable {
     public void setFeatures(List<Double> features) {
         this.features = features;
     }
-    
-        /*
-     * Used for cloning the Detectors Array. 
-     * Same Detectors, diff experiments
+
+    /*
+     * Used for cloning the FeatureVectors Array. 
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
-
 
 }

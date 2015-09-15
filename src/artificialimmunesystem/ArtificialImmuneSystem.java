@@ -1,7 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * File:   ArtificialImmuneSystem.java
+ * Author: @Pablo A. Arias
+ * Email: parias@aggies.ncat.edu
+ * Course: Comp 740 - Advanced Artificial Intelligence - Dr. G.V. Dozier
+ * Objective: Implementation of Aritificial Immune System 
+ *      through Negative Selection
+ * Notes: Both Unmasked and Masked implementation in Main. 
+ *      Unmasked - default
+ *      Masked - comment out Unmasked and comment in masked
  */
 package artificialimmunesystem;
 
@@ -24,20 +30,31 @@ import javax.swing.JOptionPane;
  */
 public class ArtificialImmuneSystem {
 
+    /*
+    * used for Population of self/nonself, All needed a new array list
+    * to allow for masking later on.
+    */
     private final List<FeatureVector> all = new ArrayList<>();
     private final List<FeatureVector> self = new ArrayList<>();
     private final List<FeatureVector> nonSelf = new ArrayList<>();
+    
+    //used for R-Any implementation
+    private List<Detector> detectors = new ArrayList<>();
+    private List<Detector> mature = new ArrayList<>();
+    private List<FeatureVector> matureApp = new ArrayList<>();
+      
+    //used for R-Contiguous implementation - 0% accuracy
+    private List<Detector> matureContiguous = new ArrayList<>();  
+    private List<FeatureVector> matureAppContiguous = new ArrayList<>();
+    private List<Detector> detectorsContiguous = new ArrayList<>();
+    
+    //used for R-Any Masked implementation
     private final List<FeatureVector> maskedSelf = new ArrayList<>();
     private final List<FeatureVector> maskedNonSelf = new ArrayList<>();
-    private List<Detector> mature = new ArrayList<>();
-    private List<Detector> matureContiguous = new ArrayList<>();
-    private List<Detector> matureMasked = new ArrayList<>();
-    private List<FeatureVector> matureApp = new ArrayList<>();
-    private List<FeatureVector> matureAppContiguous = new ArrayList<>();
-    private List<FeatureVector> matureAppMasked = new ArrayList<>();
-    private List<Detector> detectors = new ArrayList<>();
-    private List<Detector> detectorsContiguous = new ArrayList<>();
     private List<Detector> detectorsMasked = new ArrayList<>();
+    private List<Detector> matureMasked = new ArrayList<>();
+    private List<FeatureVector> matureAppMasked = new ArrayList<>();
+    
     private static final int BENIGN = 30;
     private static final int MALICIOUS = 30;
     private int numberFeatures;
@@ -70,19 +87,20 @@ public class ArtificialImmuneSystem {
         }
 
         ais.setNumberFeatures();
-        //ais.queryDetectors();
 
+        /*
+         * Unmasked Implementation
+         */
         for (int i = 0; i < 524; i++) {
             double immatureDetectors = 0.0, matureDetector = 0.0, nonSelfApp = 0.0;
             double results = 0;
-            for (int j = 0; j <30; j++) {
+            for (int j = 0; j < 30; j++) {
                 ais.detectors.clear();
                 ais.matureApp.clear();
                 ais.mature.clear();
                 ais.populateDetectors(1000, randomMinRangeValue, randomMaxRangeValue, 524);
                 ais.matchRAny(i);
                 results += (ais.matureApp.size() / 30.0) * 100;
-                //System.out.println(ais.matureApp.size());
                 immatureDetectors += ais.detectors.size();
                 matureDetector += ais.mature.size();
                 nonSelfApp += ais.matureApp.size();
@@ -101,35 +119,8 @@ public class ArtificialImmuneSystem {
             }
 
         }
-         
-        //ais.setDetectorsRContiguous(ais.getDetectors());
-        //ais.queryR();
-        //ais.matchRAny(ais.getR());
-        //System.out.println("R-Any AIS");
-        //System.out.println(ais.mature.size());
-        //System.out.println(ais.matureApp.size());
-        //ais.matchRContiguous(ais.getR());
-        //System.out.println("\nR-Contiguous AIS");
-        //System.out.println(ais.matureContiguous.size());
-        //System.out.println(ais.matureAppContiguous.size());
-        /* masked process
-         ais.populateDetectors(1000, randomMinRangeValue, randomMaxRangeValue, 524);
-         reduceFeatures(ais.all);
-         ais.setDetectorsMasked(1000, randomMinRangeValue, randomMaxRangeValue, ais.all.get(0).getNumberFeatures());
-         for (int i = 0; i < 60; i++) {
-         if (i < 30) {
-         ais.maskedSelf.add(ais.all.get(i));
-         } else {
-         ais.maskedNonSelf.add(ais.all.get(i));
-         }
-         }
-         ais.matchRAnyMasked(5);
-         System.out.println("R-Any Masked AIS");
-         System.out.println(ais.matureMasked.size());
-         System.out.println(ais.matureAppMasked.size());
-         System.out.println("Progress so Far");
-         */
-        
+
+        //Masked Implementation
         /*
         reduceFeatures(ais.all);
         for (int k = 0; k < 60; k++) {
@@ -169,15 +160,14 @@ public class ArtificialImmuneSystem {
             } catch (IOException e) {
                 //exception handling left as an exercise for the reader
             }
-
         }
         */
+
     }
     /*
      * Populates self/non-self Feature Vectors with Features
      * Input features from file
      */
-
     public void populateFeatures(String allFeatures) {
         FeatureVector vector = new FeatureVector();
         List<Double> features = new ArrayList<>();
@@ -186,8 +176,9 @@ public class ArtificialImmuneSystem {
         for (int i = 1; i < allFeaturesSplit.length - 1; i++) {
             features.add(Double.parseDouble(allFeaturesSplit[i]));
         }
-
         vector.setFeatures(features);
+        
+        //adds to to all, for Masked Feature Vectors. Apply mask after
         if (self.size() < BENIGN) {
             self.add(vector);
             all.add(vector);
@@ -197,18 +188,7 @@ public class ArtificialImmuneSystem {
         }
     }
 
-    /*
-     * Populates Detector list with random ranges
-     * Number of ranges equals number of features in Feature Vector
-     */
-    public void populateDetectors(int numDetectors, int randomMinRangeValue, int randomMaxRangeValue, int numberFeatures) {
-        Detector detector;
-        for (int i = 0; i < numDetectors; i++) {
-            detector = new Detector(numberFeatures, randomMinRangeValue, randomMaxRangeValue);
-            detector.populateRanges(randomMinRangeValue, randomMaxRangeValue);
-            getDetectors().add(detector);
-        }
-    }
+
 
     /**
      * @return the numberFeatures
@@ -301,7 +281,7 @@ public class ArtificialImmuneSystem {
     }
 
     /*
-     * Matches detectors to Self
+     * Matches detectors to Masked Self
      */
     public void matchSelfMasked(int r) {
 
@@ -324,7 +304,7 @@ public class ArtificialImmuneSystem {
     }
 
     /*
-     * Matches remaining detectors to Non-Self
+     * Matches detectors to Masked Non-Self
      */
     public void matchNonSelfMasked(int r) {
 
@@ -354,10 +334,10 @@ public class ArtificialImmuneSystem {
             }
         }
     }
+    
     /*
      * Matches detectors to Self, R-Contiguous AIS
      */
-
     public void matchSelfContiguous(int r) {
 
         for (int i = 0; i < self.size(); i++) {
@@ -420,7 +400,6 @@ public class ArtificialImmuneSystem {
             }
         }
         return matched;
-
     }
 
     /*
@@ -440,7 +419,8 @@ public class ArtificialImmuneSystem {
     }
 
     /*
-     * Queries user for number of detectors 
+     * Queries user for number of detectors
+     * Unused
      */
     public void queryDetectors() {
         String numDetectorsString = JOptionPane.showInputDialog(null,
@@ -450,6 +430,7 @@ public class ArtificialImmuneSystem {
 
     /*
      * Queries user for number of detectors 
+     * Unused
      */
     public void queryR() {
         String rAny = JOptionPane.showInputDialog(null,
@@ -506,6 +487,22 @@ public class ArtificialImmuneSystem {
         }
     }
 
+        /*
+     * Populates Detector list with random ranges
+     * Number of ranges equals number of features in Feature Vector
+     */
+    public void populateDetectors(int numDetectors, int randomMinRangeValue, int randomMaxRangeValue, int numberFeatures) {
+        Detector detector;
+        for (int i = 0; i < numDetectors; i++) {
+            detector = new Detector(numberFeatures, randomMinRangeValue, randomMaxRangeValue);
+            detector.populateRanges(randomMinRangeValue, randomMaxRangeValue);
+            getDetectors().add(detector);
+        }
+    }
+    
+    /*
+    * Creates new Detectors to detectors Masked
+    */
     public void setDetectorsMasked(int numDetectors, int randomMinRangeValue, int randomMaxRangeValue, int numberFeatures) {
         Detector detector;
         for (int i = 0; i < numDetectors; i++) {
@@ -515,6 +512,9 @@ public class ArtificialImmuneSystem {
         }
     }
 
+    /*
+    * 
+    */
     public void setMask(List<FeatureVector> featureVector, List<FeatureVector> masked) {
         //detectorsContiguous
         for (FeatureVector p : featureVector) {
@@ -526,6 +526,9 @@ public class ArtificialImmuneSystem {
         }
     }
 
+    /*
+    * Reduces the amount of features according to Masked Feature Vectors
+    */
     private static void reduceFeatures(List<FeatureVector> maskedFV) {
 
         for (int i = 0; i < maskedFV.get(0).getNumberFeatures(); i++) { //524 features
@@ -542,6 +545,9 @@ public class ArtificialImmuneSystem {
         }
     }
 
+    /*
+    * Methodology for Masked Any-R
+    */
     private void matchRAnyMasked(int r) {
         matchSelfMasked(r);
         matchNonSelfMasked(r);

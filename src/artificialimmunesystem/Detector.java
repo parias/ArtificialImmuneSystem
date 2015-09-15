@@ -1,7 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * File:   Detector.java
+ * Author: @Pablo A. Arias
+ * Email: parias@aggies.ncat.edu
+ * Course: Comp 740 - Advanced Artificial Intelligence - Dr. G.V. Dozier
+ * Objective: Implementation of Aritificial Immune System 
+ *      through Negative Selection
+ * Objective: Detector class for creation of detectors;
  */
 package artificialimmunesystem;
 
