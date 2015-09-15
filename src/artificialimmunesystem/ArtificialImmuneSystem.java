@@ -72,32 +72,36 @@ public class ArtificialImmuneSystem {
         ais.setNumberFeatures();
         //ais.queryDetectors();
 
-        /*
-         for (int i = 0; i < 524; i++) {
-         double results = 0;
-         for (int j = 0; j < 10; j++) {
-         ais.detectors.clear();
-         ais.matureApp.clear();
-         ais.mature.clear();
-         ais.populateDetectors(1000, randomMinRangeValue, randomMaxRangeValue);
-         ais.matchRAny(i);
-         results += (ais.matureApp.size() / 30.0) * 100;
-         System.out.println(ais.matureApp.size());
-         }
-         System.out.println(results / 10.0);
-         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("results3.txt", true)))) {
-         out.print("R = " + i);
-         out.print("\tAverage Accuracy:  " + (results / 10.0));
-         out.print("\tNonSelf App Detected:  " + ais.matureApp.size());
-         out.print("\tImmature detectors:  " + ais.detectors.size());
-         out.print("\tMature detectors:  " + ais.mature.size());
-         out.println();
-         } catch (IOException e) {
-         //exception handling left as an exercise for the reader
-         }
+        for (int i = 0; i < 524; i++) {
+            double immatureDetectors = 0.0, matureDetector = 0.0, nonSelfApp = 0.0;
+            double results = 0;
+            for (int j = 0; j <30; j++) {
+                ais.detectors.clear();
+                ais.matureApp.clear();
+                ais.mature.clear();
+                ais.populateDetectors(1000, randomMinRangeValue, randomMaxRangeValue, 524);
+                ais.matchRAny(i);
+                results += (ais.matureApp.size() / 30.0) * 100;
+                //System.out.println(ais.matureApp.size());
+                immatureDetectors += ais.detectors.size();
+                matureDetector += ais.mature.size();
+                nonSelfApp += ais.matureApp.size();
+                System.out.println("masked app: " + ais.matureApp.size() + "\tImmature detectors:  " + ais.detectors.size() + "\tMature detectors:  " + ais.mature.size());
+            }
+            System.out.println(results / 30.0);
+            try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("results.txt", true)))) {
+                out.print("R = " + i);
+                out.print("\tAverage Accuracy:  " + (results / 30.0));
+                out.print("\tNonSelf App Detected:  " + nonSelfApp / 30.0);
+                out.print("\tImmature detectors:  " + immatureDetectors / 30.0);
+                out.print("\tMature detectors:  " + matureDetector / 30.0);
+                out.println();
+            } catch (IOException e) {
+                //exception handling left as an exercise for the reader
+            }
 
-         }
-         */
+        }
+         
         //ais.setDetectorsRContiguous(ais.getDetectors());
         //ais.queryR();
         //ais.matchRAny(ais.getR());
@@ -125,39 +129,49 @@ public class ArtificialImmuneSystem {
          System.out.println(ais.matureAppMasked.size());
          System.out.println("Progress so Far");
          */
+        
+        /*
+        reduceFeatures(ais.all);
+        for (int k = 0; k < 60; k++) {
+            if (k < 30) {
+                ais.maskedSelf.add(ais.all.get(k));
+            } else {
+                ais.maskedNonSelf.add(ais.all.get(k));
+            }
+        }
         for (int i = 0; i < 211; i++) {
             double results = 0;
+            double immatureDetectors = 0.0, matureDetector = 0.0, nonSelfApp = 0.0;
             for (int j = 0; j < 30; j++) {
+
                 ais.detectorsMasked.clear();
                 ais.matureAppMasked.clear();
                 ais.matureMasked.clear();
+                ais.detectors.clear();
                 ais.populateDetectors(1000, randomMinRangeValue, randomMaxRangeValue, 524);
-                reduceFeatures(ais.all);
                 ais.setDetectorsMasked(1000, randomMinRangeValue, randomMaxRangeValue, ais.all.get(0).getNumberFeatures());
-                for (int k = 0; k < 60; k++) {
-                    if (k < 30) {
-                        ais.maskedSelf.add(ais.all.get(k));
-                    } else {
-                        ais.maskedNonSelf.add(ais.all.get(k));
-                    }
-                }
-                ais.matchRAnyMasked(5);
+
+                ais.matchRAnyMasked(i);
                 results += (ais.matureAppMasked.size() / 30.0) * 100;
-                System.out.println(ais.matureAppMasked.size());
+                immatureDetectors += ais.detectorsMasked.size();
+                matureDetector += ais.matureMasked.size();
+                nonSelfApp += ais.matureAppMasked.size();
+                System.out.println("masked app: " + ais.matureAppMasked.size() + "\tImmature detectors:  " + ais.detectorsMasked.size() + "\tMature detectors:  " + ais.matureMasked.size());
             }
             System.out.println(results / 30.0);
             try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("resultsMasked.txt", true)))) {
                 out.print("R = " + i);
-                out.print("\tAverage Accuracy:  " + (results / 10.0));
-                out.print("\tNonSelf App Detected:  " + ais.matureAppMasked.size());
-                out.print("\tImmature detectors:  " + ais.detectorsMasked.size());
-                out.print("\tMature detectors:  " + ais.matureMasked.size());
+                out.print("\tAverage Accuracy:  " + (results / 30.0));
+                out.print("\tNonSelf App Detected:  " + nonSelfApp / 30.0);
+                out.print("\tImmature detectors:  " + immatureDetectors / 30.0);
+                out.print("\tMature detectors:  " + matureDetector / 30.0);
                 out.println();
             } catch (IOException e) {
                 //exception handling left as an exercise for the reader
             }
 
         }
+        */
     }
     /*
      * Populates self/non-self Feature Vectors with Features
