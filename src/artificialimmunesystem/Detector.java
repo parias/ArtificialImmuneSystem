@@ -13,7 +13,7 @@ import java.util.Random;
  *
  * @author Pablo A. Arias <parias@aggies.ncat.edu>
  */
-public class Detector implements Cloneable{
+public class Detector implements Cloneable {
 
     private List<String> ranges = new ArrayList<>();
     private int numberRanges;
@@ -92,13 +92,13 @@ public class Detector implements Cloneable{
             return large + " " + small;
         }
     }
-    
-    public boolean inRange(String range, double feature){ 
+
+    public boolean inRange(String range, double feature) {
         String[] rangeSplit = range.split(" ");
         double min = Double.parseDouble(rangeSplit[0]);
         double max = Double.parseDouble(rangeSplit[1]);
         return (feature > min) && (feature < max);
-        
+
     }
 
     /**
@@ -114,9 +114,9 @@ public class Detector implements Cloneable{
     public void setRanges(List<String> ranges) {
         this.ranges = ranges;
     }
-    
+
     @Override
-    public Object clone() throws CloneNotSupportedException{
+    public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 

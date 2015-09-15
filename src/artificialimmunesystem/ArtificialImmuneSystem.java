@@ -65,17 +65,18 @@ public class ArtificialImmuneSystem {
         ais.queryDetectors();
 
         ais.populateDetectors(getNumDetectors(), randomMinRangeValue, randomMaxRangeValue);
-        
+
         ais.setDetectorsRContiguous(ais.getDetectors());
 
         ais.queryR();
 
         ais.matchRAny(ais.getR());
+        System.out.println("R-Any AIS");
         System.out.println(ais.mature.size());
         System.out.println(ais.matureApp.size());
-        
+
         ais.matchRContiguous(ais.getR());
-        System.out.println("\nContiguous");
+        System.out.println("\nR-Contiguous AIS");
         System.out.println(ais.matureContiguous.size());
         System.out.println(ais.matureAppContiguous.size());
 
@@ -223,13 +224,13 @@ public class ArtificialImmuneSystem {
             }
         }
     }
-    
+
     /*
      * 
      */
     public void matchSelfContiguous(int r) {
 
-        for (int i = 0; i < self.size()-28; i++) {
+        for (int i = 0; i < self.size() - 28; i++) {
             FeatureVector vector = self.get(i);
             for (int k = 0; k < getDetectorsContiguous().size(); k++) {
                 Detector detector = detectorsContiguous.get(k);
@@ -239,9 +240,8 @@ public class ArtificialImmuneSystem {
                 }
             }
         }
-        System.out.println("test space");
     }
-        
+
     /*
      * 
      */
@@ -255,11 +255,13 @@ public class ArtificialImmuneSystem {
                 Detector detector = detectorsContiguous.get(k);
                 //for (int j = 0; j < numberFeatures; j++) {
                 if (matchContiguous(vector, detector, r)) {
-                     matureContiguous.add(detector);
-                     detected = true;
+                    matureContiguous.add(detector);
+                    detected = true;
                 }
             }
-            if (detected == true) matureAppContiguous.add(vector);
+            if (detected == true) {
+                matureAppContiguous.add(vector);
+            }
         }
     }
 
@@ -267,17 +269,17 @@ public class ArtificialImmuneSystem {
      *
      */
     public boolean matchContiguous(FeatureVector vector, Detector detector, int r) {
-        
+
         //create sub array of both detector and vector
         List<Double> features = vector.getFeatures();
         List<String> ranges = detector.getRanges();
-        
+
         //match self/non-self
         int fired = 0;
-        for(int i = 0; i < features.size()-r; i++){
-            List<Double> featuresTemp = features.subList(i, i+r);
-            List<String> detectorTemp = ranges.subList(i, i+r);
-            for(int j = 0; j < featuresTemp.size();j++){
+        for (int i = 0; i < features.size() - r; i++) {
+            List<Double> featuresTemp = features.subList(i, i + r);
+            List<String> detectorTemp = ranges.subList(i, i + r);
+            for (int j = 0; j < featuresTemp.size(); j++) {
                 if (detector.inRange(detectorTemp.get(j), featuresTemp.get(j))) {
                     fired++;
                 }
@@ -286,14 +288,14 @@ public class ArtificialImmuneSystem {
         return fired > r;
     }
 
-        /*
+    /*
      * 
      */
     public void matchRAny(int r) {
         matchSelf(r);
         matchNonSelf(r);
     }
-    
+
     /*
      * 
      */
@@ -301,6 +303,7 @@ public class ArtificialImmuneSystem {
         matchSelfContiguous(r);
         matchNonSelfContiguous(r);
     }
+
     /**
      * @return the r
      */
@@ -341,7 +344,7 @@ public class ArtificialImmuneSystem {
      */
     public void setDetectorsRContiguous(List<Detector> detectors) {
         //detectorsContiguous
-        for(Detector p : detectors){
+        for (Detector p : detectors) {
             try {
                 detectorsContiguous.add((Detector) p.clone());
             } catch (CloneNotSupportedException ex) {
